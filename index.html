@@ -22,12 +22,33 @@
   <link rel="manifest" href="./assets/site.webmanifest">
   <meta name="theme-color" content="#D89A5B">
   
-  <!-- 8th Wall -->
   <script src="https://cdn.8thwall.com/web/aframe/8frame-1.3.0.min.js"></script>
   <script src="https://cdn.8thwall.com/web/xrextras/xrextras.js"></script>
  
-  <!-- XR Engine -->
   <script async src="./engine/xr.js" data-preload-chunks="slam"></script>
+
+  <script>
+    AFRAME.registerComponent('target-video-handler', {
+      init: function () {
+        const el = this.el
+        const video = document.querySelector(el.getAttribute('src'))
+
+        // Play video when target comes into smartphone frame view
+        el.id, el.parentNode.addEventListener('xrimagefound', () => {
+          if (video) {
+            video.play().catch(err => console.log("Playback error: ", err))
+          }
+        })
+
+        // Pause video stream when tracking is broken to save system memory
+        el.parentNode.addEventListener('xrimagelost', () => {
+          if (video) {
+            video.pause()
+          }
+        })
+      }
+    })
+  </script>
 
   <script>
     const onxrloaded = () => {
@@ -279,39 +300,38 @@
 
   <a-scene
     xrextras-gesture-detector
-    xrextras-loading
     xrextras-runtime-error
-
-    xrweb="disableWorldTracking: true">
+    xrweb="disableWorldTracking: true; canvas: #xr-canvas">
   
-  <a-assets>
-    <video 
-      id="bearVideo" 
-      src="./assets/video/bear_video.mp4"
-      preload="auto" 
-      loop="true" 
-      muted="true" 
-      playsinline 
-      webkit-playsinline>
-    </video>
-  </a-assets>
+    <a-assets>
+      <video 
+        id="bearVideo" 
+        src="./assets/video/bear_video.mp4"
+        preload="auto" 
+        loop="true" 
+        muted="true" 
+        playsinline 
+        webkit-playsinline>
+      </video>
+    </a-assets>
 
-  <a-camera position="0 1.6 0"></a-camera>
-  
-  <xrextras-named-image-target name="bear_target">
-      
-    <a-video
-      id="bearPlane"
-      src="#bearVideo"
-      width="0.75"
-      height="1.0"
-      position="0 0 0"
-      rotation="0 0 0">
-    </a-video> 
+    <a-camera position="0 1.6 0"></a-camera>
+    
+    <xrextras-named-image-target name="bear_target">
+        
+      <a-video
+        id="bearPlane"
+        src="#bearVideo"
+        target-video-handler
+        width="0.75"
+        height="1.0"
+        position="0 0 0"
+        rotation="0 0 0">
+      </a-video> 
 
-  </xrextras-named-image-target>
+    </xrextras-named-image-target>
 
-</a-scene>
+  </a-scene>
 
   <canvas id="xr-canvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 1;"></canvas>
 
@@ -331,7 +351,6 @@
         }
       };
 
-      // 1. Wait for 8th Wall global instance to process initialized state
       if (window.XR8) {
         xrReady = true;
         checkReady();
@@ -342,24 +361,24 @@
         });
       }
 
-      // 2. Continually verify if 8th wall has spawned and started the camera stream
       const waitForVideo = () => {
         const videos = document.querySelectorAll("video");
 
-        if (!videos.length) {
+        // Ignore our asset-managed target video, look specifically for 8th Wall's camera stream stream feed
+        const cameraFeed = Array.from(videos).find(v => v.id !== "bearVideo");
+
+        if (!cameraFeed) {
           setTimeout(waitForVideo, 300);
           return;
         }
 
-        const v = videos[0];
-
-        if (v.readyState >= 2) {
+        if (cameraFeed.readyState >= 2) {
           videoReady = true;
           checkReady();
           return;
         }
 
-        v.addEventListener("loadeddata", () => {
+        cameraFeed.addEventListener("loadeddata", () => {
           videoReady = true;
           checkReady();
         }, { once: true });
@@ -367,24 +386,29 @@
 
       waitForVideo();
 
-      // 3. User interactions to trigger AR active state
       button.onclick = async () => {
         if (!button.classList.contains("active")) return;
 
-        // Standard user gesture unlock for audio layers
+        // User gesture initialization interaction unlock
         try {
           const ctx = new (window.AudioContext || window.webkitAudioContext)();
           await ctx.resume();
         } catch(e){}
 
-        // Smooth transition out for splash layer
+        // Audio stream setup for our targets video asset context wrapper
+        const targetVideo = document.getElementById("bearVideo");
+        if(targetVideo) {
+          targetVideo.play().then(() => {
+            targetVideo.pause();
+            targetVideo.muted = false; // Safely unmute after system registration
+          }).catch(e => console.log("Audio unlock tracking skipped", e));
+        }
+
         const overlay = document.getElementById("start-overlay");
         overlay.style.opacity = 0;
         
         setTimeout(() => {
           overlay.remove();
-          
-          // Re-enable pointer events for the Canvas overlay layer so users can pinch/tap 3D elements
           document.getElementById("xr-canvas").style.pointerEvents = "auto";
         }, 600);
       };
