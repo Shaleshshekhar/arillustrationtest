@@ -320,22 +320,24 @@
     <div id="noise"></div>
     <div id="glass-layer"></div>
     <div id="content">
-      <div id="visual-group"><img id="splash-art" src="./assets/splash-art.png"> <img id="signature"
-          src="./assets/signature.png"></div><div id="progress-container">
-            <div id="progress-track">
-              <div id="progress-bar"></div>
-            </div>
-            <span id="progress-text">Initializing Engine 0%</span>
-          </div>
+      <div id="visual-group">
+        <img id="splash-art" src="./assets/splash-art.png"> 
+        <img id="signature" src="./assets/signature.png">
+      </div>
 
-          <button id="start-button">
-            <span id="btn-text">Setting Up AR</span> 
-            <span class="dots-wrapper">
-              <span class="dot">.</span> <span class="dot">.</span> <span class="dot">.</span>
-            </span>
-          </button>
-          <button id="start-button"><span id="btn-text">Loading AR</span> <span
-          class="dot">.</span> <span class="dot">.</span> <span class="dot">.</span></button>
+      <div id="progress-container">
+        <div id="progress-track">
+          <div id="progress-bar"></div>
+        </div>
+        <span id="progress-text">Initializing Engine 0%</span>
+      </div>
+
+      <button id="start-button">
+        <span id="btn-text">Setting Up AR</span> 
+        <span class="dots-wrapper">
+          <span class="dot">.</span> <span class="dot">.</span> <span class="dot">.</span>
+        </span>
+      </button>
     </div>
   </div><canvas id="xr-canvas"></canvas>
   <script>
@@ -348,14 +350,14 @@
 
     // Replace these names with the exact filenames inside your asset directory
     const videoAssets = [
-      './assets/bear.mp4',
-      './assets/crow.mp4',
-      './assets/donkey.mp4',
-      './assets/football.mp4',
-      './assets/bookshop.mp4',
-      './assets/sign.mp4',
-      './assets/crows.mp4',
-      './assets/television.mp4'
+      './assets/arvideos/bear_video.mp4',
+      './assets/arvideos/crow_video.mp4',
+      './assets/arvideos/donkey_video.mp4',
+      './assets/arvideos/football_video.mp4',
+      './assets/arvideos/bookshop_video.mp4',
+      './assets/arvideos/sign_video.mp4',
+      './assets/arvideos/crows_video.mp4',
+      './assets/arvideos/television_video.mp4'
     ];
 
     let xrReady = false;
