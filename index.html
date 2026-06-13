@@ -44,6 +44,7 @@
       flex-direction: column;
       align-items: center;
       gap: 8px;
+      transition: opacity 0.4s ease, visibility 0.4s ease; /* Added for smooth hiding */
     }
 
     #progress-track {
@@ -346,9 +347,9 @@
     const btnText = document.getElementById("btn-text");
     const progressBar = document.getElementById("progress-bar");
     const progressText = document.getElementById("progress-text");
+    const progressContainer = document.getElementById("progress-container");
     const dotsWrapper = document.querySelector(".dots-wrapper");
 
-    // Replace these names with the exact filenames inside your asset directory
     const videoAssets = [
       './assets/arvideos/bear_video.mp4',
       './assets/arvideos/crow_video.mp4',
@@ -363,17 +364,43 @@
     let xrReady = false;
     let assetsDownloaded = false;
     let blobURLs = {};
+    
+    // Watchdog variables to catch stuck downloads
+    let lastProgressTime = Date.now();
+    let watchdogInterval = null;
 
     const updateSystemStatus = (text, percent) => {
       progressBar.style.width = `${percent}%`;
       progressText.textContent = `${text} ${Math.round(percent)}%`;
+      lastProgressTime = Date.now(); // Reset stuck timer every time progress updates
     };
 
-    // --- PHASE 1: GENUINE MULTI-FILE DOWNLOAD QUEUE ---
+    // --- SMART STUCK WATCHDOG SYSTEM ---
+    const startWatchdog = () => {
+      watchdogInterval = setInterval(() => {
+        if (assetsDownloaded) {
+          clearInterval(watchdogInterval);
+          return;
+        }
+        
+        // If progress hasn't moved in 6 seconds, assume connection stalled
+        if (Date.now() - lastProgressTime > 6000) {
+          clearInterval(watchdogInterval);
+          progressText.textContent = "Connection stalled. Optimizing network...";
+          setTimeout(() => {
+            window.location.reload(); // Clean auto-refresh
+          }, 1000);
+        }
+      }, 2000);
+    };
+
+    // --- PHASE 1: DOWNLOAD QUEUE ---
     const downloadAllAssets = async () => {
       btnText.textContent = "Downloading Assets";
       let totalVideos = videoAssets.length;
       let progressMap = new Array(totalVideos).fill(0);
+      
+      startWatchdog(); // Turn on the watchdog monitor
 
       const downloadVideo = (url, index) => {
         return new Promise((resolve, reject) => {
@@ -405,23 +432,28 @@
       try {
         await Promise.all(videoAssets.map((url, idx) => downloadVideo(url, idx)));
         assetsDownloaded = true;
+        clearInterval(watchdogInterval);
         checkSystemReadiness();
       } catch (e) {
-        progressText.textContent = "Download failed. Please refresh.";
-        console.error("Asset pipeline error:", e);
+        progressText.textContent = "Network hiccup. Refreshing...";
+        setTimeout(() => window.location.reload(), 1500);
       }
     };
 
     const checkSystemReadiness = () => {
       if (!xrReady) {
-        updateSystemStatus("Calibrating AR Camera Tracking", 90);
+        updateSystemStatus("Calibrating AR Camera Tracking", 95);
         btnText.textContent = "Preparing Camera System";
         return;
       }
       if (!assetsDownloaded) return;
 
-      // Everything is perfect
-      updateSystemStatus("Experience Ready", 100);
+      // 1. Hide the progress bar beautifully
+      progressContainer.style.opacity = "0";
+      progressContainer.style.visibility = "hidden";
+      setTimeout(() => progressContainer.remove(), 400);
+
+      // 2. Ready up button
       button.classList.add("active");
       btnText.textContent = "Start AR Experience";
       if (dotsWrapper) dotsWrapper.remove();
@@ -437,27 +469,27 @@
       });
     }
 
-    // --- PHASE 2: AUDIO / EXPLICIT USER GESTURE UNLOCK ---
+    // --- PHASE 2: LAUNCH & SECURE PLAYBACK ---
     button.onclick = async () => {
       if (!button.classList.contains("active")) return;
 
       btnText.textContent = "Launching...";
 
-      // Find 8th Wall generated video layers and link cached blobs instantly
+      // Secure match mapping: Only apply blobs to available DOM video layers safely
       const sceneVideos = document.querySelectorAll("video");
       sceneVideos.forEach((v, index) => {
         if (videoAssets[index] && blobURLs[videoAssets[index]]) {
           v.src = blobURLs[videoAssets[index]];
         }
         
-        v.muted = false; // Audio track is enabled and completely safe now!
+        v.muted = false; 
         v.setAttribute('playsinline', 'true');
         v.setAttribute('webkit-playsinline', 'true');
 
-        // Prime audio permissions context within browser security limits
+        // Prime execution stream without stopping thread
         v.play().then(() => {
           v.pause();
-        }).catch(err => console.log("Audio target bypass note:", err));
+        }).catch(err => console.log("Priming channel:", err));
       });
 
       try {
@@ -465,9 +497,12 @@
         if (ctx.state === 'suspended') await ctx.resume();
       } catch(e){}
 
-      try {
-        if (window.XR8 && XR8.XrController) XR8.XrController.resume();
-      } catch(e){}
+      // Resume camera track safely *after* video contexts map to avoid screen freeze
+      setTimeout(() => {
+        try {
+          if (window.XR8 && XR8.XrController) XR8.XrController.resume();
+        } catch(e){}
+      }, 100);
 
       const overlay = document.getElementById("start-overlay");
       overlay.style.opacity = 0;
