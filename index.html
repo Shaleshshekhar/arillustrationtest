@@ -406,7 +406,7 @@
         checkSystemReadiness();
       } catch (e) {
         progressText.textContent = "Network hiccup. Refreshing...";
-        setTimeout(() => window.location.reload(), 1500);
+        setTimeout(() => window.location.reload(), 25000);
       }
     };
 
