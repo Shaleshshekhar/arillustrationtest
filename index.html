@@ -299,18 +299,25 @@
       pointer-events: none;
     }
 
-    /* Invisible, non-destructive background container to satisfy iOS Safari restrictions */
+    /* Invisible background container that forces iOS to flatten the video nodes */
     #ios-media-priming-vault {
       position: fixed;
-      top: -9999px;
-      left: -9999px;
+      top: 0;
+      left: 0;
       width: 1px;
       height: 1px;
-      opacity: 0;
+      opacity: 0.001;
       overflow: hidden;
       pointer-events: none;
-      visibility: hidden;
       z-index: -99999;
+    }
+
+    /* Force any video inside the vault to stay 0x0 pixels and hidden from the GPU compositor */
+    #ios-media-priming-vault video {
+      width: 0px !important;
+      height: 0px !important;
+      transform: scale(0) !important;
+      position: absolute !important;
     }
   </style>
 </head>
@@ -523,14 +530,19 @@
       if (!blobURLs[url]) continue;
       try {
         const dummy = document.createElement('video');
+        
+        // Explicit presentation attributes to stop iOS from hijacking the screen layout
         dummy.setAttribute('playsinline', 'true');
         dummy.setAttribute('webkit-playsinline', 'true');
+        dummy.setAttribute('muted', 'true');
+        dummy.style.width = '0px';
+        dummy.style.height = '0px';
         dummy.muted = true;
         dummy.src = blobURLs[url];
         
         mediaVault.appendChild(dummy);
         
-        // Execute inline sequentially inside the user interaction thread window context
+        // Warm up the video track inside the interaction thread window context
         await dummy.play();
         dummy.pause();
       } catch (err) {
