@@ -1,251 +1,478 @@
-<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>AR Illustrations</title><meta itemprop="name" content="AR Illustrations"><meta name="twitter:title" content="AR Illustrations"><meta property="og:title" content="AR Illustrations"><meta property="og:site_name" content="AR Illustrations"><meta name="description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta itemprop="description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta property="og:description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta name="twitter:description" content="Bring your illustrations to life with immersive augmented reality experiences."><link rel="icon" href="/favicon.ico"><link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png"><link rel="manifest" href="./assets/site.webmanifest"><meta name="theme-color" content="#D89A5B"><script crossorigin="anonymous" src="./external/runtime/runtime.js"></script><script src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js" async crossorigin="anonymous" data-preload-chunks="slam"></script><script src="https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js" crossorigin="anonymous"></script><meta property="og:image" content="./assets/preview.png">
-<style>html, body {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #000;
-}
+<!doctype html>
+<html>
 
-/* ===== OVERLAY ===== */
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AR Illustrations</title>
+  <meta itemprop="name" content="AR Illustrations">
+  <meta name="twitter:title" content="AR Illustrations">
+  <meta property="og:title" content="AR Illustrations">
+  <meta property="og:site_name" content="AR Illustrations">
+  <meta name="description" content="Bring your illustrations to life with immersive augmented reality experiences.">
+  <meta itemprop="description" content="Bring your illustrations to life with immersive augmented reality experiences.">
+  <meta property="og:description"
+    content="Bring your illustrations to life with immersive augmented reality experiences.">
+  <meta name="twitter:description"
+    content="Bring your illustrations to life with immersive augmented reality experiences.">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png">
+  <link rel="manifest" href="./assets/site.webmanifest">
+  <meta name="theme-color" content="#D89A5B">
+  <script crossorigin="anonymous" src="./external/runtime/runtime.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js" async crossorigin="anonymous"
+    data-preload-chunks="slam"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js"
+    crossorigin="anonymous"></script>
+  <meta property="og:image" content="./assets/preview.png">
+  <style>
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
 
-#start-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #F6E3C5;
-}
+    /* ===== REAL PROGRESS BAR ===== */
+    #progress-container {
+      width: min(80vw, 300px);
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
 
-/* ===== BACKGROUND ===== */
+    #progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 99px;
+      overflow: hidden;
+    }
 
-#gradient-bg, #light-sweep, #noise, #glass-layer {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
+    #progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #E6A85C, #C97A3D);
+      border-radius: 99px;
+      transition: width 0.2s ease;
+    }
 
-#gradient-bg svg {
-  width: 120%;
-  height: 120%;
-}
+    #progress-text {
+      font-size: 13px;
+      color: #7a6e61;
+      font-weight: 500;
+    }
 
-/* ===== LIGHT SWEEP ===== */
+    /* ===== OVERLAY ===== */
 
-#light-sweep {
-  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.15), transparent);
-  animation: sweep 10s linear infinite;
-}
+    #start-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #F6E3C5;
+    }
 
-@keyframes sweep {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(100%); }
-}
+    /* ===== BACKGROUND ===== */
 
-/* ===== NOISE ===== */
+    #gradient-bg,
+    #light-sweep,
+    #noise,
+    #glass-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
 
-#noise {
-  background-image: url('./assets/noise.png');
-  opacity: 0.05;
-  mix-blend-mode: overlay;
-}
+    #gradient-bg svg {
+      width: 120%;
+      height: 120%;
+    }
 
-/* ===== GLASS ===== */
+    /* ===== LIGHT SWEEP ===== */
 
-#glass-layer {
-  backdrop-filter: blur(60px);
-  background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.05));
-  border: 1px solid rgba(255,255,255,0.2);
-}
+    #light-sweep {
+      background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+      animation: sweep 10s linear infinite;
+    }
 
-/* ===== CONTENT ===== */
-
-#content {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  height: 100%;
-  width: 100%;
-  padding: 40px 20px;
-  box-sizing: border-box;
-  pointer-events: auto;
-}
-
-#visual-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  flex-grow: 1;
-  justify-content: center;
-}
-
-/* FLOAT */
-
-@keyframes float {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-#splash-art {
-  width: min(90vw, 420px);
-  aspect-ratio: 1;
-  animation: float 6s ease-in-out infinite;
-}
-
-#signature {
-  width: min(40vw, 180px);
-  aspect-ratio: 1;
-  animation: float 7s ease-in-out infinite;
-}
-
-/* ===== BUTTON ===== */
-
-#start-button {
-  position: relative;
-  padding: 16px 36px;
-  font-size: 18px;
-  border-radius: 999px;
-  border: none;
-  cursor: pointer;
-
-  background: #b5a89a;
-  color: #fff;
-
-  display: flex;
-  align-items: center;
-  gap: 6px;
-
-  pointer-events: none;
-  transition: all 0.4s ease;
-
-  overflow: hidden;
-  isolation: isolate;
-}
-
-/* shimmer */
-
-#start-button::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -150%;
-  width: 150%;
-  height: 100%;
-  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
-  transform: skewX(-20deg);
-  animation: shimmer 2s infinite;
-}
-
-@keyframes shimmer {
-  from { left: -150%; }
-  to { left: 150%; }
-}
-
-#start-button span {
-  position: relative;
-  z-index: 1;
-}
-
-/* READY */
-
-#start-button.active {
-  background: linear-gradient(135deg, #E6A85C, #C97A3D);
-  pointer-events: auto;
-  animation: glow 1.5s infinite alternate;
-}
-
-#start-button.active::before {
-  display: none;
-}
-
-#start-button:active {
-  transform: scale(0.96);
-}
-
-@keyframes glow {
-  from { box-shadow: 0 0 10px rgba(230,168,92,0.3); }
-  to   { box-shadow: 0 0 20px rgba(230,168,92,0.6); }
-}
-
-/* DOTS */
-
-.dot {
-  opacity: 0.2;
-  animation: dotPulse 1.2s infinite;
-}
-
-.dot:nth-child(2) { animation-delay: 0.2s; }
-.dot:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes dotPulse {
-  0%,80%,100% { opacity: 0.2; transform: translateY(0); }
-  40% { opacity: 1; transform: translateY(-3px); }
-}
-
-/* XR */
-
-#xr-canvas {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-}</style></head><body><script src="bundle.js"></script><div id="start-overlay"><div id="gradient-bg"><svg viewBox="0 0 800 800"><defs><filter id="blur"><feGaussianBlur stdDeviation="80"/></filter><radialGradient id="g1"><stop offset="0%" stop-color="#FFD27A"/><stop offset="100%" stop-color="#E6A85C"/></radialGradient></defs><g filter="url(#blur)"><circle cx="400" cy="400" r="300" fill="url(#g1)"/></g></svg></div><div id="light-sweep"></div><div id="noise"></div><div id="glass-layer"></div><div id="content"><div id="visual-group"><img id="splash-art" src="./assets/splash-art.png"> <img id="signature" src="./assets/signature.png"></div><button id="start-button"><span id="btn-text">Loading AR</span> <span class="dot">.</span> <span class="dot">.</span> <span class="dot">.</span></button></div></div><canvas id="xr-canvas"></canvas>
-<script>
-    window.addEventListener("load", () => {
-      const button = document.getElementById("start-button");
-      const btnText = document.getElementById("btn-text");
-
-      const activateButton = () => {
-        button.classList.add("active");
-        btnText.textContent = "Start AR";
-        document.querySelectorAll(".dot").forEach(el => el.remove());
-      };
-
-      // Enable the button once the 8th Wall Engine has mounted natively
-      if (window.XR8) {
-        activateButton();
-      } else {
-        window.addEventListener("xrloaded", activateButton);
+    @keyframes sweep {
+      from {
+        transform: translateX(-100%);
       }
 
-      button.onclick = async () => {
-        if (!button.classList.contains("active")) return;
+      to {
+        transform: translateX(100%);
+      }
+    }
 
-        // 1. Unmute/Unlock audio context globally on user gesture safely 
-        try {
-          const ctx = new (window.AudioContext || window.webkitAudioContext)();
-          if (ctx.state === 'suspended') {
-            await ctx.resume();
-          }
-        } catch(e) { console.log("AudioContext unlock bypassed"); }
+    /* ===== NOISE ===== */
 
-        // 2. Clear any browser video restrictions silently by creating a temporary DOM gesture acknowledgment
-        try {
-          const dummyVideo = document.createElement('video');
-          dummyVideo.setAttribute('playsinline', 'true');
-          dummyVideo.muted = true;
-          await dummyVideo.play().catch(() => {});
-        } catch(e) {}
+    #noise {
+      background-image: url('./assets/noise.png');
+      opacity: 0.05;
+      mix-blend-mode: overlay;
+    }
 
-        // 3. Resume XR8 Engine tracking loop safely
-        try {
-          if (window.XR8 && XR8.XrController) {
-            XR8.XrController.resume();
-          }
-        } catch(e) { console.error("Error resuming XR8:", e); }
+    /* ===== GLASS ===== */
 
-        // 4. Smooth transition out of splash screen overlay
-        const overlay = document.getElementById("start-overlay");
-        overlay.style.opacity = 0;
-        setTimeout(() => {
-          overlay.remove();
-        }, 450);
+    #glass-layer {
+      backdrop-filter: blur(60px);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.05));
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* ===== CONTENT ===== */
+
+    #content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      width: 100%;
+      padding: 40px 20px;
+      box-sizing: border-box;
+      pointer-events: auto;
+    }
+
+    #visual-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      flex-grow: 1;
+      justify-content: center;
+    }
+
+    /* FLOAT */
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    #splash-art {
+      width: min(90vw, 420px);
+      aspect-ratio: 1;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    #signature {
+      width: min(40vw, 180px);
+      aspect-ratio: 1;
+      animation: float 7s ease-in-out infinite;
+    }
+
+    /* ===== BUTTON ===== */
+
+    #start-button {
+      position: relative;
+      padding: 16px 36px;
+      font-size: 18px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+
+      background: #b5a89a;
+      color: #fff;
+
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      pointer-events: none;
+      transition: all 0.4s ease;
+
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    /* shimmer */
+
+    #start-button::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -150%;
+      width: 150%;
+      height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transform: skewX(-20deg);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      from {
+        left: -150%;
+      }
+
+      to {
+        left: 150%;
+      }
+    }
+
+    #start-button span {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* READY */
+
+    #start-button.active {
+      background: linear-gradient(135deg, #E6A85C, #C97A3D);
+      pointer-events: auto;
+      animation: glow 1.5s infinite alternate;
+    }
+
+    #start-button.active::before {
+      display: none;
+    }
+
+    #start-button:active {
+      transform: scale(0.96);
+    }
+
+    @keyframes glow {
+      from {
+        box-shadow: 0 0 10px rgba(230, 168, 92, 0.3);
+      }
+
+      to {
+        box-shadow: 0 0 20px rgba(230, 168, 92, 0.6);
+      }
+    }
+
+    /* DOTS */
+
+    .dot {
+      opacity: 0.2;
+      animation: dotPulse 1.2s infinite;
+    }
+
+    .dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes dotPulse {
+
+      0%,
+      80%,
+      100% {
+        opacity: 0.2;
+        transform: translateY(0);
+      }
+
+      40% {
+        opacity: 1;
+        transform: translateY(-3px);
+      }
+    }
+
+    /* XR */
+
+    #xr-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <script src="bundle.js"></script>
+  <div id="start-overlay">
+    <div id="gradient-bg"><svg viewBox="0 0 800 800">
+        <defs>
+          <filter id="blur">
+            <feGaussianBlur stdDeviation="80" />
+          </filter>
+          <radialGradient id="g1">
+            <stop offset="0%" stop-color="#FFD27A" />
+            <stop offset="100%" stop-color="#E6A85C" />
+          </radialGradient>
+        </defs>
+        <g filter="url(#blur)">
+          <circle cx="400" cy="400" r="300" fill="url(#g1)" />
+        </g>
+      </svg></div>
+    <div id="light-sweep"></div>
+    <div id="noise"></div>
+    <div id="glass-layer"></div>
+    <div id="content">
+      <div id="visual-group"><img id="splash-art" src="./assets/splash-art.png"> <img id="signature"
+          src="./assets/signature.png"></div><div id="progress-container">
+            <div id="progress-track">
+              <div id="progress-bar"></div>
+            </div>
+            <span id="progress-text">Initializing Engine 0%</span>
+          </div>
+
+          <button id="start-button">
+            <span id="btn-text">Setting Up AR</span> 
+            <span class="dots-wrapper">
+              <span class="dot">.</span> <span class="dot">.</span> <span class="dot">.</span>
+            </span>
+          </button>
+          <button id="start-button"><span id="btn-text">Loading AR</span> <span
+          class="dot">.</span> <span class="dot">.</span> <span class="dot">.</span></button>
+    </div>
+  </div><canvas id="xr-canvas"></canvas>
+  <script>
+  window.addEventListener("load", () => {
+    const button = document.getElementById("start-button");
+    const btnText = document.getElementById("btn-text");
+    const progressBar = document.getElementById("progress-bar");
+    const progressText = document.getElementById("progress-text");
+    const dotsWrapper = document.querySelector(".dots-wrapper");
+
+    // Replace these names with the exact filenames inside your asset directory
+    const videoAssets = [
+      './assets/bear.mp4',
+      './assets/crow.mp4',
+      './assets/donkey.mp4',
+      './assets/football.mp4',
+      './assets/bookshop.mp4',
+      './assets/sign.mp4',
+      './assets/crows.mp4',
+      './assets/television.mp4'
+    ];
+
+    let xrReady = false;
+    let assetsDownloaded = false;
+    let blobURLs = {};
+
+    const updateSystemStatus = (text, percent) => {
+      progressBar.style.width = `${percent}%`;
+      progressText.textContent = `${text} ${Math.round(percent)}%`;
+    };
+
+    // --- PHASE 1: GENUINE MULTI-FILE DOWNLOAD QUEUE ---
+    const downloadAllAssets = async () => {
+      btnText.textContent = "Downloading Assets";
+      let totalVideos = videoAssets.length;
+      let progressMap = new Array(totalVideos).fill(0);
+
+      const downloadVideo = (url, index) => {
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open('GET', url, true);
+          xhr.responseType = 'blob';
+
+          xhr.onprogress = (event) => {
+            if (event.lengthComputable) {
+              progressMap[index] = event.loaded / event.total;
+              const totalProgress = (progressMap.reduce((a, b) => a + b, 0) / totalVideos) * 100;
+              updateSystemStatus("Downloading Experience Assets", totalProgress);
+            }
+          };
+
+          xhr.onload = () => {
+            if (xhr.status === 200) {
+              blobURLs[url] = URL.createObjectURL(xhr.response);
+              resolve();
+            } else {
+              reject();
+            }
+          };
+          xhr.onerror = () => reject();
+          xhr.send();
+        });
       };
-    });
-  </script>
-</body></html>
+
+      try {
+        await Promise.all(videoAssets.map((url, idx) => downloadVideo(url, idx)));
+        assetsDownloaded = true;
+        checkSystemReadiness();
+      } catch (e) {
+        progressText.textContent = "Download failed. Please refresh.";
+        console.error("Asset pipeline error:", e);
+      }
+    };
+
+    const checkSystemReadiness = () => {
+      if (!xrReady) {
+        updateSystemStatus("Calibrating AR Camera Tracking", 90);
+        btnText.textContent = "Preparing Camera System";
+        return;
+      }
+      if (!assetsDownloaded) return;
+
+      // Everything is perfect
+      updateSystemStatus("Experience Ready", 100);
+      button.classList.add("active");
+      btnText.textContent = "Start AR Experience";
+      if (dotsWrapper) dotsWrapper.remove();
+    };
+
+    if (window.XR8) {
+      xrReady = true;
+      downloadAllAssets();
+    } else {
+      window.addEventListener("xrloaded", () => {
+        xrReady = true;
+        downloadAllAssets();
+      });
+    }
+
+    // --- PHASE 2: AUDIO / EXPLICIT USER GESTURE UNLOCK ---
+    button.onclick = async () => {
+      if (!button.classList.contains("active")) return;
+
+      btnText.textContent = "Launching...";
+
+      // Find 8th Wall generated video layers and link cached blobs instantly
+      const sceneVideos = document.querySelectorAll("video");
+      sceneVideos.forEach((v, index) => {
+        if (videoAssets[index] && blobURLs[videoAssets[index]]) {
+          v.src = blobURLs[videoAssets[index]];
+        }
+        
+        v.muted = false; // Audio track is enabled and completely safe now!
+        v.setAttribute('playsinline', 'true');
+        v.setAttribute('webkit-playsinline', 'true');
+
+        // Prime audio permissions context within browser security limits
+        v.play().then(() => {
+          v.pause();
+        }).catch(err => console.log("Audio target bypass note:", err));
+      });
+
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (ctx.state === 'suspended') await ctx.resume();
+      } catch(e){}
+
+      try {
+        if (window.XR8 && XR8.XrController) XR8.XrController.resume();
+      } catch(e){}
+
+      const overlay = document.getElementById("start-overlay");
+      overlay.style.opacity = 0;
+      setTimeout(() => overlay.remove(), 450);
+    };
+  });
+</script>
+</body>
+
+</html>
