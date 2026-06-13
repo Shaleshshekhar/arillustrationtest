@@ -298,6 +298,20 @@
       inset: 0;
       pointer-events: none;
     }
+
+    /* Invisible, non-destructive background container to satisfy iOS Safari restrictions */
+    #ios-media-priming-vault {
+      position: fixed;
+      top: -9999px;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      overflow: hidden;
+      pointer-events: none;
+      visibility: hidden;
+      z-index: -99999;
+    }
   </style>
 </head>
 <body>
