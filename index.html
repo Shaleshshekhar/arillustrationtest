@@ -322,7 +322,7 @@
   <canvas id="xr-canvas"></canvas>
 
   <script>
-  window.addEventListener("load", () => {
+   window.addEventListener("load", () => {
     const button = document.getElementById("start-button");
     const btnText = document.getElementById("btn-text");
     const progressBar = document.getElementById("progress-bar");
@@ -347,10 +347,16 @@
     let lastProgressTime = Date.now();
     let watchdogInterval = null;
 
+    // Cache Configuration
+    const CACHE_NAME = 'ar-video-assets-v1';
+    const MAX_RETRIES = 5;
+    let retryCount = parseInt(sessionStorage.getItem("ar_retry_count") || "0", 10);
+    const currentTimeoutThreshold = 15000 + (retryCount * 5000);
+
     const updateSystemStatus = (text, percent) => {
       progressBar.style.width = `${percent}%`;
       progressText.textContent = `${text} ${Math.round(percent)}%`;
-      lastProgressTime = Date.now();
+      lastProgressTime = Date.now(); 
     };
 
     const startWatchdog = () => {
@@ -359,14 +365,29 @@
           clearInterval(watchdogInterval);
           return;
         }
-        if (Date.now() - lastProgressTime > 15000) {
+        
+        if (Date.now() - lastProgressTime > currentTimeoutThreshold) {
           clearInterval(watchdogInterval);
-          progressText.textContent = "Connection stalled. Optimizing network...";
-          setTimeout(() => { window.location.reload(); }, 1000);
+          
+          if (retryCount >= MAX_RETRIES - 1) {
+            progressText.style.color = "#D9534F"; 
+            progressText.innerHTML = "<strong>Connection speed insufficient.</strong><br>Please find a faster network.";
+            btnText.textContent = "Connection Failed";
+            button.style.background = "#d9534f";
+            button.classList.remove("active");
+            sessionStorage.removeItem("ar_retry_count");
+          } else {
+            const nextTry = retryCount + 2;
+            progressText.textContent = `Network lagging. Retaining downloaded parts & retrying (Attempt ${nextTry}/${MAX_RETRIES})...`;
+            sessionStorage.setItem("ar_retry_count", (retryCount + 1).toString());
+            
+            setTimeout(() => { window.location.reload(); }, 1500);
+          }
         }
       }, 2000);
     };
 
+    // --- SMART CACHE-ENABLED DOWNLOAD ENGINE ---
     const downloadAllAssets = async () => {
       btnText.textContent = "Downloading Assets";
       let totalVideos = videoAssets.length;
@@ -374,7 +395,25 @@
       
       startWatchdog();
 
-      const downloadVideo = (url, index) => {
+      // Open or create our custom local cache partition
+      const videoCache = await caches.open(CACHE_NAME);
+
+      const loadOrDownloadVideo = async (url, index) => {
+        // 1. Check if this specific asset already exists in our browser cache
+        const cachedResponse = await videoCache.match(url);
+        
+        if (cachedResponse) {
+          // Asset is cached! Read it directly from the device disk
+          const blob = await cachedResponse.blob();
+          blobURLs[url] = URL.createObjectURL(blob);
+          progressMap[index] = 1; // Mark as 100% instantly
+          
+          const totalProgress = (progressMap.reduce((a, b) => a + b, 0) / totalVideos) * 100;
+          updateSystemStatus("Loading Cached Assets", totalProgress);
+          return;
+        }
+
+        // 2. Cache miss: Download via network with progress tracking
         return new Promise((resolve, reject) => {
           const xhr = new XMLHttpRequest();
           xhr.open('GET', url, true);
@@ -388,8 +427,13 @@
             }
           };
 
-          xhr.onload = () => {
+          xhr.onload = async () => {
             if (xhr.status === 200) {
+              const rawResponse = new Response(xhr.response);
+              
+              // Put a copy of the fully complete response into cache for next time
+              await videoCache.put(url, rawResponse.clone());
+              
               blobURLs[url] = URL.createObjectURL(xhr.response);
               resolve();
             } else { reject(); }
@@ -400,13 +444,23 @@
       };
 
       try {
-        await Promise.all(videoAssets.map((url, idx) => downloadVideo(url, idx)));
+        // Process files. Fully cached files finish on the first frame of execution loop
+        await Promise.all(videoAssets.map((url, idx) => loadOrDownloadVideo(url, idx)));
         assetsDownloaded = true;
         clearInterval(watchdogInterval);
+        
+        sessionStorage.removeItem("ar_retry_count");
         checkSystemReadiness();
       } catch (e) {
-        progressText.textContent = "Network hiccup. Refreshing...";
-        setTimeout(() => window.location.reload(), 25000);
+        if (retryCount >= MAX_RETRIES - 1) {
+          progressText.style.color = "#D9534F";
+          progressText.textContent = "Network error. Please try a stable internet connection.";
+          sessionStorage.removeItem("ar_retry_count");
+        } else {
+          progressText.textContent = "Network glitch. Preserving download progress...";
+          sessionStorage.setItem("ar_retry_count", (retryCount + 1).toString());
+          setTimeout(() => window.location.reload(), 1500);
+        }
       }
     };
 
@@ -437,47 +491,37 @@
       });
     }
 
-    // --- NEW FIXED INTERACTION LOGIC ---
+    // --- INTERACTION HANDLING ENGINE ---
     button.onclick = async () => {
       if (!button.classList.contains("active")) return;
-
       btnText.textContent = "Launching...";
 
-      // 1. Prime the audio context securely 
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
         if (ctx.state === 'suspended') await ctx.resume();
-      } catch(e) {}
+      } catch(e){}
 
-      // 2. Instead of finding missing DOM video tags, we create ONE global invisible 
-      // video tag and play/pause it instantly. This satisfies the global user-gesture condition 
-      // for ALL video media instances spun up inside this frame context.
       try {
         const structuralDummy = document.createElement('video');
         structuralDummy.setAttribute('playsinline', 'true');
         structuralDummy.muted = true;
-        structuralDummy.src = blobURLs[videoAssets[0]]; // link any valid blob asset
+        structuralDummy.src = blobURLs[videoAssets[0]];
         document.body.appendChild(structuralDummy);
-        
         await structuralDummy.play();
         structuralDummy.pause();
-        structuralDummy.remove(); // Clean up context instantly
+        structuralDummy.remove();
       } catch (err) {
         console.warn("Media context setup bypassed:", err);
       }
 
-      // 3. Inject blob URLs directly into the runtime ECS structure configuration map before unfreezing camera
       try {
         const ecsConfig = window.ecs?.application?.config?.objects;
         if (ecsConfig) {
           Object.keys(ecsConfig).forEach(entityId => {
             const ent = ecsConfig[entityId];
-            // Check if object is a video configuration type
             if (ent.videoControls || (ent.material && ent.material.textureSrc)) {
               const currentSrc = ent.material?.textureSrc?.asset || ent.instanceData?.children?.['bf7fad6f-2adb-4b93-955d-65a6e8cf9fb9']?.material?.textureSrc?.asset;
-              
               if (currentSrc) {
-                // Find matching asset match sequence reference path
                 const standardPath = './' + currentSrc; 
                 if (blobURLs[standardPath]) {
                   if (ent.material?.textureSrc) ent.material.textureSrc.asset = blobURLs[standardPath];
@@ -493,19 +537,14 @@
         console.error("ECS stream injection error:", ecsErr);
       }
 
-      // 4. Fade out overlay window interface smoothly
       const overlay = document.getElementById("start-overlay");
       overlay.style.opacity = 0;
       setTimeout(() => overlay.remove(), 450);
 
-      // 5. Stagger tracking resumption cycle safely by 250ms 
-      // This completely stops the engine from locking up/freezing.
       setTimeout(() => {
         try {
-          if (window.XR8 && XR8.XrController) {
-            XR8.XrController.resume();
-          }
-        } catch(e) {}
+          if (window.XR8 && XR8.XrController) XR8.XrController.resume();
+        } catch(e){}
       }, 250);
     };
   });
