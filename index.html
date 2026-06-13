@@ -1,33 +1,4 @@
-<!doctype html>
-<html>
-
-<head>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>AR Illustrations</title>
-  <meta itemprop="name" content="AR Illustrations">
-  <meta name="twitter:title" content="AR Illustrations">
-  <meta property="og:title" content="AR Illustrations">
-  <meta property="og:site_name" content="AR Illustrations">
-  <meta name="description" content="Bring your illustrations to life with immersive augmented reality experiences.">
-  <meta itemprop="description" content="Bring your illustrations to life with immersive augmented reality experiences.">
-  <meta property="og:description"
-    content="Bring your illustrations to life with immersive augmented reality experiences.">
-  <meta name="twitter:description"
-    content="Bring your illustrations to life with immersive augmented reality experiences.">
-  <link rel="icon" href="/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png">
-  <link rel="manifest" href="./assets/site.webmanifest">
-  <meta name="theme-color" content="#D89A5B">
-  <script crossorigin="anonymous" src="./external/runtime/runtime.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js" async crossorigin="anonymous"
-    data-preload-chunks="slam"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js"
-    crossorigin="anonymous"></script>
-  <meta property="og:image" content="./assets/preview.png">
-  <style>
-    html,
+<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>AR Illustrations</title><meta itemprop="name" content="AR Illustrations"><meta name="twitter:title" content="AR Illustrations"><meta property="og:title" content="AR Illustrations"><meta property="og:site_name" content="AR Illustrations"><meta name="description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta itemprop="description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta property="og:description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta name="twitter:description" content="Bring your illustrations to life with immersive augmented reality experiences."><link rel="icon" href="/favicon.ico"><link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png"><link rel="manifest" href="./assets/site.webmanifest"><meta name="theme-color" content="#D89A5B"><script crossorigin="anonymous" src="./external/runtime/runtime.js"></script><script src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js" async crossorigin="anonymous" data-preload-chunks="slam"></script><script src="https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js" crossorigin="anonymous"></script><meta property="og:image" content="./assets/preview.png"><style>html,
     body {
       margin: 0;
       width: 100%;
@@ -297,33 +268,7 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-    }
-
-  </style>
-</head>
-<body>
-  <script src="bundle.js"></script>
-
-  <div id="start-overlay">
-    <div id="content">
-      <div id="visual-group">
-        <img id="splash-art" src="./assets/splash-art.png"> 
-        <img id="signature" src="./assets/signature.png">
-      </div>
-      <div id="progress-container">
-        <div id="progress-track"><div id="progress-bar"></div></div>
-        <span id="progress-text">Initializing Engine 0%</span>
-      </div>
-      <button id="start-button">
-        <span id="btn-text">Setting Up AR</span> 
-        <span class="dots-wrapper"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>
-      </button>
-    </div>
-  </div>
-  <canvas id="xr-canvas"></canvas>
-
-  <script>
-   window.addEventListener("load", () => {
+    }</style></head><body><script src="bundle.js"></script><div id="start-overlay"><div id="content"><div id="visual-group"><img id="splash-art" src="./assets/splash-art.png"> <img id="signature" src="./assets/signature.png"></div><div id="progress-container"><div id="progress-track"><div id="progress-bar"></div></div><span id="progress-text">Initializing Engine 0%</span></div><button id="start-button"><span id="btn-text">Setting Up AR</span> <span class="dots-wrapper"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span></button></div></div><canvas id="xr-canvas"></canvas><script>window.addEventListener("load", () => {
     const button = document.getElementById("start-button");
     const btnText = document.getElementById("btn-text");
     const progressBar = document.getElementById("progress-bar");
@@ -335,9 +280,9 @@
       './assets/arvideos/bear_video.mp4',
       './assets/arvideos/crow_video.mp4',
       './assets/arvideos/donkey_video.mp4',
-      './assets/arvideos/Football_video.mp4',
-      './assets/arvideos/Bookshop_video.mp4',
-      './assets/arvideos/Sign_video.mp4',
+      './assets/arvideos/football_video.mp4',
+      './assets/arvideos/bookshop_video.mp4',
+      './assets/arvideos/sign_video.mp4',
       './assets/arvideos/crows_video.mp4',
       './assets/arvideos/television_video.mp4'
     ];
@@ -565,7 +510,4 @@
     }, 250);
   };
 
-  });
-  </script>
-</body>
-</html>
+  });</script></body></html>
