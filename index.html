@@ -1,4 +1,33 @@
-<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>AR Illustrations</title><meta itemprop="name" content="AR Illustrations"><meta name="twitter:title" content="AR Illustrations"><meta property="og:title" content="AR Illustrations"><meta property="og:site_name" content="AR Illustrations"><meta name="description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta itemprop="description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta property="og:description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta name="twitter:description" content="Bring your illustrations to life with immersive augmented reality experiences."><link rel="icon" href="/favicon.ico"><link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png"><link rel="manifest" href="./assets/site.webmanifest"><meta name="theme-color" content="#D89A5B"><script crossorigin="anonymous" src="./external/runtime/runtime.js"></script><script src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js" async crossorigin="anonymous" data-preload-chunks="slam"></script><script src="https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js" crossorigin="anonymous"></script><meta property="og:image" content="./assets/preview.png"><style>html,
+<!doctype html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AR Illustrations</title>
+  <meta itemprop="name" content="AR Illustrations">
+  <meta name="twitter:title" content="AR Illustrations">
+  <meta property="og:title" content="AR Illustrations">
+  <meta property="og:site_name" content="AR Illustrations">
+  <meta name="description" content="Bring your illustrations to life with immersive augmented reality experiences.">
+  <meta itemprop="description" content="Bring your illustrations to life with immersive augmented reality experiences.">
+  <meta property="og:description"
+    content="Bring your illustrations to life with immersive augmented reality experiences.">
+  <meta name="twitter:description"
+    content="Bring your illustrations to life with immersive augmented reality experiences.">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png">
+  <link rel="manifest" href="./assets/site.webmanifest">
+  <meta name="theme-color" content="#D89A5B">
+  <script crossorigin="anonymous" src="./external/runtime/runtime.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js" async crossorigin="anonymous"
+    data-preload-chunks="slam"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js"
+    crossorigin="anonymous"></script>
+  <meta property="og:image" content="./assets/preview.png">
+  <style>
+    html,
     body {
       margin: 0;
       width: 100%;
@@ -268,7 +297,32 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-    }</style></head><body><script src="bundle.js"></script><div id="start-overlay"><div id="content"><div id="visual-group"><img id="splash-art" src="./assets/splash-art.png"> <img id="signature" src="./assets/signature.png"></div><div id="progress-container"><div id="progress-track"><div id="progress-bar"></div></div><span id="progress-text">Initializing Engine 0%</span></div><button id="start-button"><span id="btn-text">Setting Up AR</span> <span class="dots-wrapper"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span></button></div></div><canvas id="xr-canvas"></canvas><script>window.addEventListener("load", () => {
+    }
+  </style>
+</head>
+<body>
+  <script src="bundle.js"></script>
+  
+  <div id="start-overlay">
+    <div id="content">
+      <div id="visual-group">
+        <img id="splash-art" src="./assets/splash-art.png"> 
+        <img id="signature" src="./assets/signature.png">
+      </div>
+      <div id="progress-container">
+        <div id="progress-track"><div id="progress-bar"></div></div>
+        <span id="progress-text">Initializing Engine 0%</span>
+      </div>
+      <button id="start-button">
+        <span id="btn-text">Setting Up AR</span> 
+        <span class="dots-wrapper"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>
+      </button>
+    </div>
+  </div>
+  <canvas id="xr-canvas"></canvas>
+
+  <script>
+   window.addEventListener("load", () => {
     const button = document.getElementById("start-button");
     const btnText = document.getElementById("btn-text");
     const progressBar = document.getElementById("progress-bar");
@@ -437,29 +491,50 @@
       });
     }
 
-    // --- INTERACTION HANDLING ENGINE ---
+  // --- INTERACTION HANDLING ENGINE ---
     button.onclick = async () => {
       if (!button.classList.contains("active")) return;
       btnText.textContent = "Launching...";
 
+      // 1. Audio context initialization
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
         if (ctx.state === 'suspended') await ctx.resume();
       } catch(e){}
 
+      // 2. Upgraded iOS Multi-Origin Blob Priming Loop
       try {
-        const structuralDummy = document.createElement('video');
-        structuralDummy.setAttribute('playsinline', 'true');
-        structuralDummy.muted = true;
-        structuralDummy.src = blobURLs[videoAssets[0]];
-        document.body.appendChild(structuralDummy);
-        await structuralDummy.play();
-        structuralDummy.pause();
-        structuralDummy.remove();
+        await Promise.all(videoAssets.map((url) => {
+          return new Promise((resolve) => {
+            const dummy = document.createElement('video');
+            dummy.setAttribute('playsinline', 'true');
+            dummy.setAttribute('webkit-playsinline', 'true');
+            dummy.muted = true;
+            dummy.src = blobURLs[url];
+            
+            dummy.style.position = 'absolute';
+            dummy.style.width = '1px';
+            dummy.style.height = '1px';
+            dummy.style.opacity = '0.01';
+            document.body.appendChild(dummy);
+
+            dummy.play()
+              .then(() => {
+                dummy.pause();
+                dummy.remove();
+                resolve(true);
+              })
+              .catch(() => {
+                dummy.remove();
+                resolve(false); 
+              });
+          });
+        }));
       } catch (err) {
-        console.warn("Media context setup bypassed:", err);
+        console.warn("iOS multi-origin bypass failed:", err);
       }
 
+      // 3. Inject validated blob targets straight into the active ECS configuration tree
       try {
         const ecsConfig = window.ecs?.application?.config?.objects;
         if (ecsConfig) {
@@ -483,14 +558,20 @@
         console.error("ECS stream injection error:", ecsErr);
       }
 
+      // 4. Fade out overlay window interface smoothly
       const overlay = document.getElementById("start-overlay");
       overlay.style.opacity = 0;
       setTimeout(() => overlay.remove(), 450);
 
+      // 5. Stagger tracking resumption cycle safely
       setTimeout(() => {
         try {
           if (window.XR8 && XR8.XrController) XR8.XrController.resume();
         } catch(e){}
       }, 250);
     };
-  });</script></body></html>
+
+  });
+  </script>
+</body>
+</html>
