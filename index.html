@@ -506,18 +506,17 @@
     // 2. Expose the preloaded blob assets map globally so your tracking component can see it
     window.blobURLs = blobURLs;
 
-    // 3. CRITICAL ADDITION: Inject Blobs & Pause initially to prevent audio overlapping
+// 3. CRITICAL ADDITION: Inject Blobs & Pause initially to prevent Android audio overlap
     try {
       const ecsConfig = window.ecs?.application?.config?.objects;
       if (ecsConfig) {
         Object.keys(ecsConfig).forEach(entityId => {
           const ent = ecsConfig[entityId];
           
-          // --- FORCE PAUSE THE SOUND TRACKS IMMEDIATELY AT LAUNCH ---
+          // Force baseline pause on top-level video engines immediately at launch
           if (ent.videoControls) {
             ent.videoControls.paused = true;
           }
-          // ----------------------------------------------------------
           
           // Check top-level unlit materials
           if (ent.material?.textureSrc?.asset) {
@@ -532,11 +531,10 @@
             Object.keys(ent.instanceData.children).forEach(childId => {
               const child = ent.instanceData.children[childId];
               
-              // --- FORCE PAUSE THE NESTED PREFAB TRACKS TOO ---
+              // Force baseline pause on nested prefab video engines too
               if (child.videoControls) {
                 child.videoControls.paused = true;
               }
-              // ------------------------------------------------
               
               if (child.material?.textureSrc?.asset) {
                 const standardPath = './' + child.material.textureSrc.asset;
