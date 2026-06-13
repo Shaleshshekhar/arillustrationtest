@@ -1,33 +1,4 @@
-<!doctype html>
-<html>
-
-<head>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>AR Illustrations</title>
-  <meta itemprop="name" content="AR Illustrations">
-  <meta name="twitter:title" content="AR Illustrations">
-  <meta property="og:title" content="AR Illustrations">
-  <meta property="og:site_name" content="AR Illustrations">
-  <meta name="description" content="Bring your illustrations to life with immersive augmented reality experiences.">
-  <meta itemprop="description" content="Bring your illustrations to life with immersive augmented reality experiences.">
-  <meta property="og:description"
-    content="Bring your illustrations to life with immersive augmented reality experiences.">
-  <meta name="twitter:description"
-    content="Bring your illustrations to life with immersive augmented reality experiences.">
-  <link rel="icon" href="/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png">
-  <link rel="manifest" href="./assets/site.webmanifest">
-  <meta name="theme-color" content="#D89A5B">
-  <script crossorigin="anonymous" src="./external/runtime/runtime.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js" async crossorigin="anonymous"
-    data-preload-chunks="slam"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js"
-    crossorigin="anonymous"></script>
-  <meta property="og:image" content="./assets/preview.png">
-  <style>
-    html,
+<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>AR Illustrations</title><meta itemprop="name" content="AR Illustrations"><meta name="twitter:title" content="AR Illustrations"><meta property="og:title" content="AR Illustrations"><meta property="og:site_name" content="AR Illustrations"><meta name="description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta itemprop="description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta property="og:description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta name="twitter:description" content="Bring your illustrations to life with immersive augmented reality experiences."><link rel="icon" href="/favicon.ico"><link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png"><link rel="manifest" href="./assets/site.webmanifest"><meta name="theme-color" content="#D89A5B"><script crossorigin="anonymous" src="./external/runtime/runtime.js"></script><script src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js" async crossorigin="anonymous" data-preload-chunks="slam"></script><script src="https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js" crossorigin="anonymous"></script><meta property="og:image" content="./assets/preview.png"><style>html,
     body {
       margin: 0;
       width: 100%;
@@ -296,53 +267,7 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-    }
-  </style>
-</head>
-
-<body>
-  <script src="bundle.js"></script>
-  <div id="start-overlay">
-    <div id="gradient-bg"><svg viewBox="0 0 800 800">
-        <defs>
-          <filter id="blur">
-            <feGaussianBlur stdDeviation="80" />
-          </filter>
-          <radialGradient id="g1">
-            <stop offset="0%" stop-color="#FFD27A" />
-            <stop offset="100%" stop-color="#E6A85C" />
-          </radialGradient>
-        </defs>
-        <g filter="url(#blur)">
-          <circle cx="400" cy="400" r="300" fill="url(#g1)" />
-        </g>
-      </svg></div>
-    <div id="light-sweep"></div>
-    <div id="noise"></div>
-    <div id="glass-layer"></div>
-    <div id="content">
-      <div id="visual-group">
-        <img id="splash-art" src="./assets/splash-art.png"> 
-        <img id="signature" src="./assets/signature.png">
-      </div>
-
-      <div id="progress-container">
-        <div id="progress-track">
-          <div id="progress-bar"></div>
-        </div>
-        <span id="progress-text">Initializing Engine 0%</span>
-      </div>
-
-      <button id="start-button">
-        <span id="btn-text">Setting Up AR</span> 
-        <span class="dots-wrapper">
-          <span class="dot">.</span> <span class="dot">.</span> <span class="dot">.</span>
-        </span>
-      </button>
-    </div>
-  </div><canvas id="xr-canvas"></canvas>
-  <script>
-  window.addEventListener("load", () => {
+    }</style></head><body><script src="bundle.js"></script><div id="start-overlay"><div id="gradient-bg"><svg viewBox="0 0 800 800"><defs><filter id="blur"><feGaussianBlur stdDeviation="80"/></filter><radialGradient id="g1"><stop offset="0%" stop-color="#FFD27A"/><stop offset="100%" stop-color="#E6A85C"/></radialGradient></defs><g filter="url(#blur)"><circle cx="400" cy="400" r="300" fill="url(#g1)"/></g></svg></div><div id="light-sweep"></div><div id="noise"></div><div id="glass-layer"></div><div id="content"><div id="visual-group"><img id="splash-art" src="./assets/splash-art.png"> <img id="signature" src="./assets/signature.png"></div><div id="progress-container"><div id="progress-track"><div id="progress-bar"></div></div><span id="progress-text">Initializing Engine 0%</span></div><button id="start-button"><span id="btn-text">Setting Up AR</span> <span class="dots-wrapper"><span class="dot">.</span> <span class="dot">.</span> <span class="dot">.</span></span></button></div></div><canvas id="xr-canvas"></canvas><script>window.addEventListener("load", () => {
     const button = document.getElementById("start-button");
     const btnText = document.getElementById("btn-text");
     const progressBar = document.getElementById("progress-bar");
@@ -383,8 +308,8 @@
           return;
         }
         
-        // If progress hasn't moved in 6 seconds, assume connection stalled
-        if (Date.now() - lastProgressTime > 6000) {
+        // If progress hasn't moved in 15 seconds, assume connection stalled
+        if (Date.now() - lastProgressTime > 15000) {
           clearInterval(watchdogInterval);
           progressText.textContent = "Connection stalled. Optimizing network...";
           setTimeout(() => {
@@ -508,8 +433,4 @@
       overlay.style.opacity = 0;
       setTimeout(() => overlay.remove(), 450);
     };
-  });
-</script>
-</body>
-
-</html>
+  });</script></body></html>
