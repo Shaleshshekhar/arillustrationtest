@@ -1,419 +1,251 @@
-<!DOCTYPE html>
-<html>
+<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>AR Illustrations</title><meta itemprop="name" content="AR Illustrations"><meta name="twitter:title" content="AR Illustrations"><meta property="og:title" content="AR Illustrations"><meta property="og:site_name" content="AR Illustrations"><meta name="description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta itemprop="description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta property="og:description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta name="twitter:description" content="Bring your illustrations to life with immersive augmented reality experiences."><link rel="icon" href="/favicon.ico"><link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png"><link rel="manifest" href="./assets/site.webmanifest"><meta name="theme-color" content="#D89A5B"><script crossorigin="anonymous" src="./external/runtime/runtime.js"></script><script src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js" async crossorigin="anonymous" data-preload-chunks="slam"></script><script src="https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js" crossorigin="anonymous"></script><meta property="og:image" content="./assets/preview.png">
+<style>html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+/* ===== OVERLAY ===== */
 
-  <title>AR Illustrations</title>
-  <meta itemprop="name" content="AR Illustrations">
-  <meta name="twitter:title" content="AR Illustrations">
-  <meta property="og:title" content="AR Illustrations">
-  <meta property="og:site_name" content="AR Illustrations">
-  <meta name="description" content="Bring your illustrations to life with immersive augmented reality experiences.">
-  <meta itemprop="description" content="Bring your illustrations to life with immersive augmented reality experiences.">
-  <meta property="og:description" content="Bring your illustrations to life with immersive augmented reality experiences.">
-  <meta name="twitter:description" content="Bring your illustrations to life with immersive augmented reality experiences.">
-  
-  <link rel="icon" href="/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png">
-  <link rel="manifest" href="./assets/site.webmanifest">
-  <meta name="theme-color" content="#D89A5B">
-  
-  <script src="https://cdn.8thwall.com/web/aframe/8frame-1.3.0.min.js"></script>
-  <script src="https://cdn.8thwall.com/web/xrextras/xrextras.js"></script>
- 
-  <script async src="./engine/xr.js" data-preload-chunks="slam"></script>
+#start-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #F6E3C5;
+}
 
-  <script>
-    AFRAME.registerComponent('target-video-handler', {
-      init: function () {
-        const el = this.el
-        const video = document.querySelector(el.getAttribute('src'))
+/* ===== BACKGROUND ===== */
 
-        // Play video when target comes into smartphone frame view
-        el.id, el.parentNode.addEventListener('xrimagefound', () => {
-          if (video) {
-            video.play().catch(err => console.log("Playback error: ", err))
-          }
-        })
+#gradient-bg, #light-sweep, #noise, #glass-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
 
-        // Pause video stream when tracking is broken to save system memory
-        el.parentNode.addEventListener('xrimagelost', () => {
-          if (video) {
-            video.pause()
-          }
-        })
-      }
-    })
-  </script>
+#gradient-bg svg {
+  width: 120%;
+  height: 120%;
+}
 
-  <script>
-    const onxrloaded = () => {
-      console.log('XR LOADED')
+/* ===== LIGHT SWEEP ===== */
 
-      XR8.XrController.configure({
-        imageTargetData: [{
-          name: 'bear_target',
-          type: 'PLANAR',
-          imagePath: './assets/targets/bear_target_luminance.jpg',
-          properties: {
-            top: 320,
-            left: 0,
-            width: 960,
-            height: 1280,
-            isRotated: false,
-            originalWidth: 960,
-            originalHeight: 1920
-          }
-        }]
-      })
+#light-sweep {
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.15), transparent);
+  animation: sweep 10s linear infinite;
+}
 
-      console.log('BEAR IMAGE TARGET CONFIGURED')
-    }
+@keyframes sweep {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
 
-    window.XR8
-      ? onxrloaded()
-      : window.addEventListener('xrloaded', onxrloaded)
-  </script>
+/* ===== NOISE ===== */
 
-  <style>
-    html, body {
-      margin: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: #000;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
+#noise {
+  background-image: url('./assets/noise.png');
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+}
 
-    /* ===== OVERLAY ===== */
-    #start-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 99999;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #F6E3C5;
-      opacity: 1;
-      transition: opacity 0.6s ease;
-    }
+/* ===== GLASS ===== */
 
-    /* ===== BACKGROUND ===== */
-    #gradient-bg, #light-sweep, #noise, #glass-layer {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-    }
+#glass-layer {
+  backdrop-filter: blur(60px);
+  background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.05));
+  border: 1px solid rgba(255,255,255,0.2);
+}
 
-    #gradient-bg svg {
-      width: 120%;
-      height: 120%;
-    }
+/* ===== CONTENT ===== */
 
-    /* ===== LIGHT SWEEP ===== */
-    #light-sweep {
-      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.15), transparent);
-      animation: sweep 10s linear infinite;
-    }
+#content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  pointer-events: auto;
+}
 
-    @keyframes sweep {
-      from { transform: translateX(-100%); }
-      to { transform: translateX(100%); }
-    }
+#visual-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  flex-grow: 1;
+  justify-content: center;
+}
 
-    /* ===== NOISE ===== */
-    #noise {
-      background-image: url('./assets/noise.png');
-      opacity: 0.05;
-      mix-blend-mode: overlay;
-    }
+/* FLOAT */
 
-    /* ===== GLASS ===== */
-    #glass-layer {
-      backdrop-filter: blur(60px);
-      background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.05));
-      border: 1px solid rgba(255,255,255,0.2);
-    }
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
 
-    /* ===== CONTENT ===== */
-    #content {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      height: 100%;
-      width: 100%;
-      padding: 40px 20px;
-      box-sizing: border-box;
-      pointer-events: auto;
-    }
+#splash-art {
+  width: min(90vw, 420px);
+  aspect-ratio: 1;
+  animation: float 6s ease-in-out infinite;
+}
 
-    #visual-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      flex-grow: 1;
-      justify-content: center;
-    }
+#signature {
+  width: min(40vw, 180px);
+  aspect-ratio: 1;
+  animation: float 7s ease-in-out infinite;
+}
 
-    /* FLOAT */
-    @keyframes float {
-      0%,100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
+/* ===== BUTTON ===== */
 
-    #splash-art {
-      width: min(90vw, 420px);
-      aspect-ratio: 1;
-      animation: float 6s ease-in-out infinite;
-    }
+#start-button {
+  position: relative;
+  padding: 16px 36px;
+  font-size: 18px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
 
-    #signature {
-      width: min(40vw, 180px);
-      aspect-ratio: 1;
-      animation: float 7s ease-in-out infinite;
-    }
+  background: #b5a89a;
+  color: #fff;
 
-    /* ===== BUTTON ===== */
-    #start-button {
-      position: relative;
-      padding: 16px 36px;
-      font-size: 18px;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      background: #b5a89a;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      pointer-events: none;
-      transition: all 0.4s ease;
-      overflow: hidden;
-      isolation: isolate;
-    }
+  display: flex;
+  align-items: center;
+  gap: 6px;
 
-    /* shimmer */
-    #start-button::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: -150%;
-      width: 150%;
-      height: 100%;
-      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
-      transform: skewX(-20deg);
-      animation: shimmer 2s infinite;
-    }
+  pointer-events: none;
+  transition: all 0.4s ease;
 
-    @keyframes shimmer {
-      from { left: -150%; }
-      to { left: 150%; }
-    }
+  overflow: hidden;
+  isolation: isolate;
+}
 
-    #start-button span {
-      position: relative;
-      z-index: 1;
-    }
+/* shimmer */
 
-    /* READY */
-    #start-button.active {
-      background: linear-gradient(135deg, #E6A85C, #C97A3D);
-      pointer-events: auto;
-      animation: glow 1.5s infinite alternate;
-    }
+#start-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 150%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+  transform: skewX(-20deg);
+  animation: shimmer 2s infinite;
+}
 
-    #start-button.active::before {
-      display: none;
-    }
+@keyframes shimmer {
+  from { left: -150%; }
+  to { left: 150%; }
+}
 
-    #start-button:active {
-      transform: scale(0.96);
-    }
+#start-button span {
+  position: relative;
+  z-index: 1;
+}
 
-    @keyframes glow {
-      from { box-shadow: 0 0 10px rgba(230,168,92,0.3); }
-      to   { box-shadow: 0 0 20px rgba(230,168,92,0.6); }
-    }
+/* READY */
 
-    /* DOTS */
-    .dot {
-      opacity: 0.2;
-      animation: dotPulse 1.2s infinite;
-    }
+#start-button.active {
+  background: linear-gradient(135deg, #E6A85C, #C97A3D);
+  pointer-events: auto;
+  animation: glow 1.5s infinite alternate;
+}
 
-    .dot:nth-child(2) { animation-delay: 0.2s; }
-    .dot:nth-child(3) { animation-delay: 0.4s; }
+#start-button.active::before {
+  display: none;
+}
 
-    @keyframes dotPulse {
-      0%,80%,100% { opacity: 0.2; transform: translateY(0); }
-      40% { opacity: 1; transform: translateY(-3px); }
-    }
-  </style>
-</head>
+#start-button:active {
+  transform: scale(0.96);
+}
 
-<body>
+@keyframes glow {
+  from { box-shadow: 0 0 10px rgba(230,168,92,0.3); }
+  to   { box-shadow: 0 0 20px rgba(230,168,92,0.6); }
+}
 
-  <div id="start-overlay">
-    <div id="gradient-bg">
-      <svg viewBox="0 0 800 800">
-        <defs>
-          <filter id="blur">
-            <feGaussianBlur stdDeviation="80"/>
-          </filter>
-          <radialGradient id="g1">
-            <stop offset="0%" stop-color="#FFD27A"/>
-            <stop offset="100%" stop-color="#E6A85C"/>
-          </radialGradient>
-        </defs>
-        <g filter="url(#blur)">
-          <circle cx="400" cy="400" r="300" fill="url(#g1)"/>
-        </g>
-      </svg>
-    </div>
+/* DOTS */
 
-    <div id="light-sweep"></div>
-    <div id="noise"></div>
-    <div id="glass-layer"></div>
+.dot {
+  opacity: 0.2;
+  animation: dotPulse 1.2s infinite;
+}
 
-    <div id="content">
-      <div id="visual-group">
-        <img id="splash-art" src="./assets/splash-art.png">
-        <img id="signature" src="./assets/signature.png">
-      </div>
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
 
-      <button id="start-button">
-        <span id="btn-text">Loading AR</span>
-        <span class="dot">.</span>
-        <span class="dot">.</span>
-        <span class="dot">.</span>
-      </button>
-    </div>
-  </div>
+@keyframes dotPulse {
+  0%,80%,100% { opacity: 0.2; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-3px); }
+}
 
-  <a-scene
-    xrextras-gesture-detector
-    xrextras-runtime-error
-    xrweb="disableWorldTracking: true; canvas: #xr-canvas">
-  
-    <a-assets>
-      <video 
-        id="bearVideo" 
-        src="./assets/video/bear_video.mp4"
-        preload="auto" 
-        loop="true" 
-        muted="true" 
-        playsinline 
-        webkit-playsinline>
-      </video>
-    </a-assets>
+/* XR */
 
-    <a-camera position="0 1.6 0"></a-camera>
-    
-    <xrextras-named-image-target name="bear_target">
-        
-      <a-video
-        id="bearPlane"
-        src="#bearVideo"
-        target-video-handler
-        width="0.75"
-        height="1.0"
-        position="0 0 0"
-        rotation="0 0 0">
-      </a-video> 
-
-    </xrextras-named-image-target>
-
-  </a-scene>
-
-  <canvas id="xr-canvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 1;"></canvas>
-
-  <script>
+#xr-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}</style></head><body><script src="bundle.js"></script><div id="start-overlay"><div id="gradient-bg"><svg viewBox="0 0 800 800"><defs><filter id="blur"><feGaussianBlur stdDeviation="80"/></filter><radialGradient id="g1"><stop offset="0%" stop-color="#FFD27A"/><stop offset="100%" stop-color="#E6A85C"/></radialGradient></defs><g filter="url(#blur)"><circle cx="400" cy="400" r="300" fill="url(#g1)"/></g></svg></div><div id="light-sweep"></div><div id="noise"></div><div id="glass-layer"></div><div id="content"><div id="visual-group"><img id="splash-art" src="./assets/splash-art.png"> <img id="signature" src="./assets/signature.png"></div><button id="start-button"><span id="btn-text">Loading AR</span> <span class="dot">.</span> <span class="dot">.</span> <span class="dot">.</span></button></div></div><canvas id="xr-canvas"></canvas>
+<script>
     window.addEventListener("load", () => {
       const button = document.getElementById("start-button");
       const btnText = document.getElementById("btn-text");
 
-      let xrReady = false;
-      let videoReady = false;
-
-      const checkReady = () => {
-        if (xrReady && videoReady) {
-          button.classList.add("active");
-          btnText.textContent = "Start AR";
-          document.querySelectorAll(".dot").forEach(el => el.remove());
-        }
+      const activateButton = () => {
+        button.classList.add("active");
+        btnText.textContent = "Start AR";
+        document.querySelectorAll(".dot").forEach(el => el.remove());
       };
 
+      // Enable the button once the 8th Wall Engine has mounted natively
       if (window.XR8) {
-        xrReady = true;
-        checkReady();
+        activateButton();
       } else {
-        window.addEventListener("xrloaded", () => {
-          xrReady = true;
-          checkReady();
-        });
+        window.addEventListener("xrloaded", activateButton);
       }
-
-      const waitForVideo = () => {
-        const videos = document.querySelectorAll("video");
-
-        // Ignore our asset-managed target video, look specifically for 8th Wall's camera stream stream feed
-        const cameraFeed = Array.from(videos).find(v => v.id !== "bearVideo");
-
-        if (!cameraFeed) {
-          setTimeout(waitForVideo, 300);
-          return;
-        }
-
-        if (cameraFeed.readyState >= 2) {
-          videoReady = true;
-          checkReady();
-          return;
-        }
-
-        cameraFeed.addEventListener("loadeddata", () => {
-          videoReady = true;
-          checkReady();
-        }, { once: true });
-      };
-
-      waitForVideo();
 
       button.onclick = async () => {
         if (!button.classList.contains("active")) return;
 
-        // User gesture initialization interaction unlock
+        // 1. Unmute/Unlock audio context globally on user gesture safely 
         try {
           const ctx = new (window.AudioContext || window.webkitAudioContext)();
-          await ctx.resume();
-        } catch(e){}
+          if (ctx.state === 'suspended') {
+            await ctx.resume();
+          }
+        } catch(e) { console.log("AudioContext unlock bypassed"); }
 
-        // Audio stream setup for our targets video asset context wrapper
-        const targetVideo = document.getElementById("bearVideo");
-        if(targetVideo) {
-          targetVideo.play().then(() => {
-            targetVideo.pause();
-            targetVideo.muted = false; // Safely unmute after system registration
-          }).catch(e => console.log("Audio unlock tracking skipped", e));
-        }
+        // 2. Clear any browser video restrictions silently by creating a temporary DOM gesture acknowledgment
+        try {
+          const dummyVideo = document.createElement('video');
+          dummyVideo.setAttribute('playsinline', 'true');
+          dummyVideo.muted = true;
+          await dummyVideo.play().catch(() => {});
+        } catch(e) {}
 
+        // 3. Resume XR8 Engine tracking loop safely
+        try {
+          if (window.XR8 && XR8.XrController) {
+            XR8.XrController.resume();
+          }
+        } catch(e) { console.error("Error resuming XR8:", e); }
+
+        // 4. Smooth transition out of splash screen overlay
         const overlay = document.getElementById("start-overlay");
         overlay.style.opacity = 0;
-        
         setTimeout(() => {
           overlay.remove();
-          document.getElementById("xr-canvas").style.pointerEvents = "auto";
-        }, 600);
+        }, 450);
       };
     });
   </script>
-
-</body>
-</html>
+</body></html>
