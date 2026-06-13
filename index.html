@@ -268,28 +268,13 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-    }
-
-    /* Invisible, non-destructive background container to satisfy iOS Safari restrictions */
-    #ios-media-priming-vault {
-      position: fixed;
-      top: -9999px;
-      left: -9999px;
-      width: 1px;
-      height: 1px;
-      opacity: 0;
-      overflow: hidden;
-      pointer-events: none;
-      visibility: hidden;
-      z-index: -99999;
-    }</style></head><body><script src="bundle.js"></script><div id="ios-media-priming-vault"></div><div id="start-overlay"><div id="content"><div id="visual-group"><img id="splash-art" src="./assets/splash-art.png"> <img id="signature" src="./assets/signature.png"></div><div id="progress-container"><div id="progress-track"><div id="progress-bar"></div></div><span id="progress-text">Initializing Engine 0%</span></div><button id="start-button"><span id="btn-text">Setting Up AR</span> <span class="dots-wrapper"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span></button></div></div><canvas id="xr-canvas"></canvas><script>window.addEventListener("load", () => {
+    }</style></head><body><script src="bundle.js"></script><div id="start-overlay"><div id="content"><div id="visual-group"><img id="splash-art" src="./assets/splash-art.png"> <img id="signature" src="./assets/signature.png"></div><div id="progress-container"><div id="progress-track"><div id="progress-bar"></div></div><span id="progress-text">Initializing Engine 0%</span></div><button id="start-button"><span id="btn-text">Setting Up AR</span> <span class="dots-wrapper"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span></button></div></div><canvas id="xr-canvas"></canvas><script>window.addEventListener("load", () => {
     const button = document.getElementById("start-button");
     const btnText = document.getElementById("btn-text");
     const progressBar = document.getElementById("progress-bar");
     const progressText = document.getElementById("progress-text");
     const progressContainer = document.getElementById("progress-container");
     const dotsWrapper = document.querySelector(".dots-wrapper");
-    const mediaVault = document.getElementById("ios-media-priming-vault");
 
     const videoAssets = [
       './assets/arvideos/bear_video.mp4',
@@ -463,15 +448,48 @@
       if (ctx.state === 'suspended') await ctx.resume();
     } catch(e){}
 
-    // 2. Expose the preloaded blob assets map globally so our tracking component can see it
+    // 2. Expose the preloaded blob assets map globally so your tracking component can see it
     window.blobURLs = blobURLs;
 
-    // 3. Cleanly clear out the user interface loading screen overlay
+    // 3. CRITICAL ADDITION: Inject the preloaded Blob URLs into the live ECS asset tree
+    try {
+      const ecsConfig = window.ecs?.application?.config?.objects;
+      if (ecsConfig) {
+        Object.keys(ecsConfig).forEach(entityId => {
+          const ent = ecsConfig[entityId];
+          
+          // Check top-level unlit materials
+          if (ent.material?.textureSrc?.asset) {
+            const standardPath = './' + ent.material.textureSrc.asset;
+            if (blobURLs[standardPath]) {
+              ent.material.textureSrc.asset = blobURLs[standardPath];
+            }
+          }
+
+          // Inspect nested dynamic instance variations (Prefabs)
+          if (ent.instanceData?.children) {
+            Object.keys(ent.instanceData.children).forEach(childId => {
+              const child = ent.instanceData.children[childId];
+              if (child.material?.textureSrc?.asset) {
+                const standardPath = './' + child.material.textureSrc.asset;
+                if (blobURLs[standardPath]) {
+                  child.material.textureSrc.asset = blobURLs[standardPath];
+                }
+              }
+            });
+          }
+        });
+      }
+    } catch (ecsErr) {
+      console.error("ECS blob stream injection error:", ecsErr);
+    }
+
+    // 4. Cleanly clear out the user interface loading screen overlay
     const overlay = document.getElementById("start-overlay");
     overlay.style.opacity = 0;
     setTimeout(() => overlay.remove(), 450);
 
-    // 4. Safely spin up the 8th Wall camera stream context tracking array
+    // 5. Safely spin up the 8th Wall camera stream context tracking array
     setTimeout(() => {
       try {
         if (window.XR8 && XR8.XrController) XR8.XrController.resume();
