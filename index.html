@@ -1,4 +1,33 @@
-<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>AR Illustrations</title><meta itemprop="name" content="AR Illustrations"><meta name="twitter:title" content="AR Illustrations"><meta property="og:title" content="AR Illustrations"><meta property="og:site_name" content="AR Illustrations"><meta name="description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta itemprop="description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta property="og:description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta name="twitter:description" content="Bring your illustrations to life with immersive augmented reality experiences."><link rel="icon" href="/favicon.ico"><link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png"><link rel="manifest" href="./assets/site.webmanifest"><meta name="theme-color" content="#D89A5B"><script crossorigin="anonymous" src="./external/runtime/runtime.js"></script><script src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js" async crossorigin="anonymous" data-preload-chunks="slam"></script><script src="https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js" crossorigin="anonymous"></script><meta property="og:image" content="./assets/preview.png"><style>html,
+<!doctype html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AR Illustrations</title>
+  <meta itemprop="name" content="AR Illustrations">
+  <meta name="twitter:title" content="AR Illustrations">
+  <meta property="og:title" content="AR Illustrations">
+  <meta property="og:site_name" content="AR Illustrations">
+  <meta name="description" content="Bring your illustrations to life with immersive augmented reality experiences.">
+  <meta itemprop="description" content="Bring your illustrations to life with immersive augmented reality experiences.">
+  <meta property="og:description"
+    content="Bring your illustrations to life with immersive augmented reality experiences.">
+  <meta name="twitter:description"
+    content="Bring your illustrations to life with immersive augmented reality experiences.">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png">
+  <link rel="manifest" href="./assets/site.webmanifest">
+  <meta name="theme-color" content="#D89A5B">
+  <script crossorigin="anonymous" src="./external/runtime/runtime.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js" async crossorigin="anonymous"
+    data-preload-chunks="slam"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js"
+    crossorigin="anonymous"></script>
+  <meta property="og:image" content="./assets/preview.png">
+  <style>
+    html,
     body {
       margin: 0;
       width: 100%;
@@ -268,7 +297,33 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-    }</style></head><body><script src="bundle.js"></script><div id="start-overlay"><div id="content"><div id="visual-group"><img id="splash-art" src="./assets/splash-art.png"> <img id="signature" src="./assets/signature.png"></div><div id="progress-container"><div id="progress-track"><div id="progress-bar"></div></div><span id="progress-text">Initializing Engine 0%</span></div><button id="start-button"><span id="btn-text">Setting Up AR</span> <span class="dots-wrapper"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span></button></div></div><canvas id="xr-canvas"></canvas><script>window.addEventListener("load", () => {
+    }
+
+  </style>
+</head>
+<body>
+  <script src="bundle.js"></script>
+
+  <div id="start-overlay">
+    <div id="content">
+      <div id="visual-group">
+        <img id="splash-art" src="./assets/splash-art.png"> 
+        <img id="signature" src="./assets/signature.png">
+      </div>
+      <div id="progress-container">
+        <div id="progress-track"><div id="progress-bar"></div></div>
+        <span id="progress-text">Initializing Engine 0%</span>
+      </div>
+      <button id="start-button">
+        <span id="btn-text">Setting Up AR</span> 
+        <span class="dots-wrapper"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>
+      </button>
+    </div>
+  </div>
+  <canvas id="xr-canvas"></canvas>
+
+  <script>
+   window.addEventListener("load", () => {
     const button = document.getElementById("start-button");
     const btnText = document.getElementById("btn-text");
     const progressBar = document.getElementById("progress-bar");
@@ -451,14 +506,13 @@
     // 2. Expose the preloaded blob assets map globally so your tracking component can see it
     window.blobURLs = blobURLs;
 
-    // 3. CRITICAL ADDITION: Inject Blobs straight into the configuration tree
+    // 3. CRITICAL UPDATE: Inject Blobs cleanly into the blueprint configuration layout
     try {
       const ecsConfig = window.ecs?.application?.config?.objects;
       if (ecsConfig) {
         Object.keys(ecsConfig).forEach(entityId => {
           const ent = ecsConfig[entityId];
           
-          // Check top-level unlit materials
           if (ent.material?.textureSrc?.asset) {
             const standardPath = './' + ent.material.textureSrc.asset;
             if (blobURLs[standardPath]) {
@@ -466,11 +520,9 @@
             }
           }
 
-          // Inspect nested dynamic instance variations (Prefabs)
           if (ent.instanceData?.children) {
             Object.keys(ent.instanceData.children).forEach(childId => {
               const child = ent.instanceData.children[childId];
-              
               if (child.material?.textureSrc?.asset) {
                 const standardPath = './' + child.material.textureSrc.asset;
                 if (blobURLs[standardPath]) {
@@ -490,12 +542,43 @@
     overlay.style.opacity = 0;
     setTimeout(() => overlay.remove(), 450);
 
-    // 5. Safely spin up the 8th Wall camera stream context tracking array
+    // 5. Safely spin up tracking and execute the hard hard-stop loop after a short delay
     setTimeout(() => {
       try {
         if (window.XR8 && XR8.XrController) XR8.XrController.resume();
+        
+        // HARD STOP LOOP: Wait 50ms for 8th Wall's active engine thread to initialize runtime memory instances,
+        // then loop through the active components and force stop them.
+        setTimeout(() => {
+          try {
+            const app = window.ecs?.application;
+            if (app && app.world) {
+              // Query all components managing video playback streams across the system canvas
+              const videoComponents = app.world.getComponents(window.ecs.VideoControls);
+              if (videoComponents) {
+                Object.keys(videoComponents).forEach(eid => {
+                  window.ecs.VideoControls.mutate(app.world, eid, (componentInstance) => {
+                    if (componentInstance) {
+                      componentInstance.paused = true; // Kill the playback flag
+                      if (typeof componentInstance.stop === 'function') {
+                        componentInstance.stop(); // Flush the hardware decoder pool memory allocation
+                      }
+                    }
+                  });
+                });
+                console.log("Successfully executed runtime hardware-stop on background video tracks.");
+              }
+            }
+          } catch (runtimeErr) {
+            console.warn("Baseline engine stop sequence skipped:", runtimeErr);
+          }
+        }, 50);
+
       } catch(e){}
     }, 250);
   };
 
-  });</script></body></html>
+  });
+  </script>
+</body>
+</html>
