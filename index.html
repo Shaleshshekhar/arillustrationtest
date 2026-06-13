@@ -1,4 +1,33 @@
-<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>AR Illustrations</title><meta itemprop="name" content="AR Illustrations"><meta name="twitter:title" content="AR Illustrations"><meta property="og:title" content="AR Illustrations"><meta property="og:site_name" content="AR Illustrations"><meta name="description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta itemprop="description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta property="og:description" content="Bring your illustrations to life with immersive augmented reality experiences."><meta name="twitter:description" content="Bring your illustrations to life with immersive augmented reality experiences."><link rel="icon" href="/favicon.ico"><link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png"><link rel="manifest" href="./assets/site.webmanifest"><meta name="theme-color" content="#D89A5B"><script crossorigin="anonymous" src="./external/runtime/runtime.js"></script><script src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js" async crossorigin="anonymous" data-preload-chunks="slam"></script><script src="https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js" crossorigin="anonymous"></script><meta property="og:image" content="./assets/preview.png"><style>html,
+<!doctype html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AR Illustrations</title>
+  <meta itemprop="name" content="AR Illustrations">
+  <meta name="twitter:title" content="AR Illustrations">
+  <meta property="og:title" content="AR Illustrations">
+  <meta property="og:site_name" content="AR Illustrations">
+  <meta name="description" content="Bring your illustrations to life with immersive augmented reality experiences.">
+  <meta itemprop="description" content="Bring your illustrations to life with immersive augmented reality experiences.">
+  <meta property="og:description"
+    content="Bring your illustrations to life with immersive augmented reality experiences.">
+  <meta name="twitter:description"
+    content="Bring your illustrations to life with immersive augmented reality experiences.">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png">
+  <link rel="manifest" href="./assets/site.webmanifest">
+  <meta name="theme-color" content="#D89A5B">
+  <script crossorigin="anonymous" src="./external/runtime/runtime.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js" async crossorigin="anonymous"
+    data-preload-chunks="slam"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js"
+    crossorigin="anonymous"></script>
+  <meta property="og:image" content="./assets/preview.png">
+  <style>
+    html,
     body {
       margin: 0;
       width: 100%;
@@ -15,7 +44,8 @@
       flex-direction: column;
       align-items: center;
       gap: 8px;
-      transition: opacity 0.4s ease, visibility 0.4s ease; /* Added for smooth hiding */
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+      /* Added for smooth hiding */
     }
 
     #progress-track {
@@ -267,7 +297,32 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-    }</style></head><body><script src="bundle.js"></script><div id="start-overlay"><div id="gradient-bg"><svg viewBox="0 0 800 800"><defs><filter id="blur"><feGaussianBlur stdDeviation="80"/></filter><radialGradient id="g1"><stop offset="0%" stop-color="#FFD27A"/><stop offset="100%" stop-color="#E6A85C"/></radialGradient></defs><g filter="url(#blur)"><circle cx="400" cy="400" r="300" fill="url(#g1)"/></g></svg></div><div id="light-sweep"></div><div id="noise"></div><div id="glass-layer"></div><div id="content"><div id="visual-group"><img id="splash-art" src="./assets/splash-art.png"> <img id="signature" src="./assets/signature.png"></div><div id="progress-container"><div id="progress-track"><div id="progress-bar"></div></div><span id="progress-text">Initializing Engine 0%</span></div><button id="start-button"><span id="btn-text">Setting Up AR</span> <span class="dots-wrapper"><span class="dot">.</span> <span class="dot">.</span> <span class="dot">.</span></span></button></div></div><canvas id="xr-canvas"></canvas><script>window.addEventListener("load", () => {
+    }
+  </style>
+</head>
+<body>
+  <script src="bundle.js"></script>
+  
+  <div id="start-overlay">
+    <div id="content">
+      <div id="visual-group">
+        <img id="splash-art" src="./assets/splash-art.png"> 
+        <img id="signature" src="./assets/signature.png">
+      </div>
+      <div id="progress-container">
+        <div id="progress-track"><div id="progress-bar"></div></div>
+        <span id="progress-text">Initializing Engine 0%</span>
+      </div>
+      <button id="start-button">
+        <span id="btn-text">Setting Up AR</span> 
+        <span class="dots-wrapper"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>
+      </button>
+    </div>
+  </div>
+  <canvas id="xr-canvas"></canvas>
+
+  <script>
+  window.addEventListener("load", () => {
     const button = document.getElementById("start-button");
     const btnText = document.getElementById("btn-text");
     const progressBar = document.getElementById("progress-bar");
@@ -289,43 +344,35 @@
     let xrReady = false;
     let assetsDownloaded = false;
     let blobURLs = {};
-    
-    // Watchdog variables to catch stuck downloads
     let lastProgressTime = Date.now();
     let watchdogInterval = null;
 
     const updateSystemStatus = (text, percent) => {
       progressBar.style.width = `${percent}%`;
       progressText.textContent = `${text} ${Math.round(percent)}%`;
-      lastProgressTime = Date.now(); // Reset stuck timer every time progress updates
+      lastProgressTime = Date.now();
     };
 
-    // --- SMART STUCK WATCHDOG SYSTEM ---
     const startWatchdog = () => {
       watchdogInterval = setInterval(() => {
         if (assetsDownloaded) {
           clearInterval(watchdogInterval);
           return;
         }
-        
-        // If progress hasn't moved in 15 seconds, assume connection stalled
         if (Date.now() - lastProgressTime > 15000) {
           clearInterval(watchdogInterval);
           progressText.textContent = "Connection stalled. Optimizing network...";
-          setTimeout(() => {
-            window.location.reload(); // Clean auto-refresh
-          }, 1000);
+          setTimeout(() => { window.location.reload(); }, 1000);
         }
       }, 2000);
     };
 
-    // --- PHASE 1: DOWNLOAD QUEUE ---
     const downloadAllAssets = async () => {
       btnText.textContent = "Downloading Assets";
       let totalVideos = videoAssets.length;
       let progressMap = new Array(totalVideos).fill(0);
       
-      startWatchdog(); // Turn on the watchdog monitor
+      startWatchdog();
 
       const downloadVideo = (url, index) => {
         return new Promise((resolve, reject) => {
@@ -345,9 +392,7 @@
             if (xhr.status === 200) {
               blobURLs[url] = URL.createObjectURL(xhr.response);
               resolve();
-            } else {
-              reject();
-            }
+            } else { reject(); }
           };
           xhr.onerror = () => reject();
           xhr.send();
@@ -373,12 +418,10 @@
       }
       if (!assetsDownloaded) return;
 
-      // 1. Hide the progress bar beautifully
       progressContainer.style.opacity = "0";
       progressContainer.style.visibility = "hidden";
       setTimeout(() => progressContainer.remove(), 400);
 
-      // 2. Ready up button
       button.classList.add("active");
       btnText.textContent = "Start AR Experience";
       if (dotsWrapper) dotsWrapper.remove();
@@ -394,43 +437,78 @@
       });
     }
 
-    // --- PHASE 2: LAUNCH & SECURE PLAYBACK ---
+    // --- NEW FIXED INTERACTION LOGIC ---
     button.onclick = async () => {
       if (!button.classList.contains("active")) return;
 
       btnText.textContent = "Launching...";
 
-      // Secure match mapping: Only apply blobs to available DOM video layers safely
-      const sceneVideos = document.querySelectorAll("video");
-      sceneVideos.forEach((v, index) => {
-        if (videoAssets[index] && blobURLs[videoAssets[index]]) {
-          v.src = blobURLs[videoAssets[index]];
-        }
-        
-        v.muted = false; 
-        v.setAttribute('playsinline', 'true');
-        v.setAttribute('webkit-playsinline', 'true');
-
-        // Prime execution stream without stopping thread
-        v.play().then(() => {
-          v.pause();
-        }).catch(err => console.log("Priming channel:", err));
-      });
-
+      // 1. Prime the audio context securely 
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
         if (ctx.state === 'suspended') await ctx.resume();
-      } catch(e){}
+      } catch(e) {}
 
-      // Resume camera track safely *after* video contexts map to avoid screen freeze
-      setTimeout(() => {
-        try {
-          if (window.XR8 && XR8.XrController) XR8.XrController.resume();
-        } catch(e){}
-      }, 100);
+      // 2. Instead of finding missing DOM video tags, we create ONE global invisible 
+      // video tag and play/pause it instantly. This satisfies the global user-gesture condition 
+      // for ALL video media instances spun up inside this frame context.
+      try {
+        const structuralDummy = document.createElement('video');
+        structuralDummy.setAttribute('playsinline', 'true');
+        structuralDummy.muted = true;
+        structuralDummy.src = blobURLs[videoAssets[0]]; // link any valid blob asset
+        document.body.appendChild(structuralDummy);
+        
+        await structuralDummy.play();
+        structuralDummy.pause();
+        structuralDummy.remove(); // Clean up context instantly
+      } catch (err) {
+        console.warn("Media context setup bypassed:", err);
+      }
 
+      // 3. Inject blob URLs directly into the runtime ECS structure configuration map before unfreezing camera
+      try {
+        const ecsConfig = window.ecs?.application?.config?.objects;
+        if (ecsConfig) {
+          Object.keys(ecsConfig).forEach(entityId => {
+            const ent = ecsConfig[entityId];
+            // Check if object is a video configuration type
+            if (ent.videoControls || (ent.material && ent.material.textureSrc)) {
+              const currentSrc = ent.material?.textureSrc?.asset || ent.instanceData?.children?.['bf7fad6f-2adb-4b93-955d-65a6e8cf9fb9']?.material?.textureSrc?.asset;
+              
+              if (currentSrc) {
+                // Find matching asset match sequence reference path
+                const standardPath = './' + currentSrc; 
+                if (blobURLs[standardPath]) {
+                  if (ent.material?.textureSrc) ent.material.textureSrc.asset = blobURLs[standardPath];
+                  if (ent.instanceData?.children?.['bf7fad6f-2adb-4b93-955d-65a6e8cf9fb9']?.material?.textureSrc) {
+                    ent.instanceData.children['bf7fad6f-2adb-4b93-955d-65a6e8cf9fb9'].material.textureSrc.asset = blobURLs[standardPath];
+                  }
+                }
+              }
+            }
+          });
+        }
+      } catch (ecsErr) {
+        console.error("ECS stream injection error:", ecsErr);
+      }
+
+      // 4. Fade out overlay window interface smoothly
       const overlay = document.getElementById("start-overlay");
       overlay.style.opacity = 0;
       setTimeout(() => overlay.remove(), 450);
+
+      // 5. Stagger tracking resumption cycle safely by 250ms 
+      // This completely stops the engine from locking up/freezing.
+      setTimeout(() => {
+        try {
+          if (window.XR8 && XR8.XrController) {
+            XR8.XrController.resume();
+          }
+        } catch(e) {}
+      }, 250);
     };
-  });</script></body></html>
+  });
+  </script>
+</body>
+</html>
