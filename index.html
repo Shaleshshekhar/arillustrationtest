@@ -268,7 +268,52 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-    }</style></head><body><script src="bundle.js"></script><div id="start-overlay"><div id="content"><div id="visual-group"><img id="splash-art" src="./assets/splash-art.png"> <img id="signature" src="./assets/signature.png"></div><div id="progress-container"><div id="progress-track"><div id="progress-bar"></div></div><span id="progress-text">Initializing Engine 0%</span></div><button id="start-button"><span id="btn-text">Setting Up AR</span> <span class="dots-wrapper"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span></button></div></div><canvas id="xr-canvas"></canvas><script>window.addEventListener("load", () => {
+
+    /* ===== FOOTER CREDIT ===== */
+    #overlay-footer {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: #7a6e61;
+      font-weight: 500;
+      text-decoration: none;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    #overlay-footer:hover, #overlay-footer:active {
+      opacity: 1;
+      text-decoration: underline;
+    }
+        
+    }</style></head><body><script src="bundle.js"></script>
+        <div id="start-overlay"><div id="content">
+            <div id="visual-group">
+                <img id="splash-art" src="./assets/splash-art.png"> 
+                <img id="signature" src="./assets/signature.png">
+            </div><div id="progress-container">
+                <div id="progress-track">
+                    <div id="progress-bar">
+                        
+                    </div>
+                </div>
+                <span id="progress-text">Initializing Engine 0%</span>
+            </div>
+            <button id="start-button">
+                <span id="btn-text">Setting Up AR</span> 
+                <span class="dots-wrapper"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>
+            </button>
+            <a id="overlay-footer" href="https://shaleshshekhar.in" target="_blank" rel="noopener">Created by Shalesh Shekhar</a>
+        </div>
+        </div>
+        <canvas id="xr-canvas">
+            
+        </canvas>
+        <script>
+            window.addEventListener("load", () => {
     const button = document.getElementById("start-button");
     const btnText = document.getElementById("btn-text");
     const progressBar = document.getElementById("progress-bar");
